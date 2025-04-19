@@ -1,8 +1,22 @@
 from fastapi import FastAPI, HTTPException
 from typing import Dict, List, Tuple
 from itertools import permutations
+from fastapi.responses import RedirectResponse
 
 app = FastAPI()
+
+# ✅ Root route ("/") - returns a helpful message
+@app.get("/")
+def root():
+    return {"message": "Welcome! Use POST /calculate with your product order."}
+
+# ✅ Favicon route - returns 204 (no content)
+@app.get("/favicon.ico")
+async def favicon():
+    return RedirectResponse(url="https://fastapi.tiangolo.com/img/favicon.png")
+    # or alternatively just:
+    # from fastapi.responses import Response
+    # return Response(status_code=204)
 
 # Warehouse stock: product -> (center, weight in kg)
 product_data = {
@@ -86,7 +100,7 @@ def compute_min_cost(order: Dict[str, int]) -> float:
 
     return min_cost
 
-# FastAPI endpoint
+# POST endpoint to calculate cost
 @app.post("/calculate")
 async def calculate_cost(order: Dict[str, int]):
     try:
